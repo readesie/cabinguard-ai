@@ -1,0 +1,27 @@
+# CabinGuard AI — Python Dependencies
+# Core
+kafka-python==2.0.2
+pyyaml==6.0.1
+requests==2.32.3
+
+# API layer
+flask==3.0.3
+flask-restful==0.3.10
+
+# MQTT bridge
+paho-mqtt==2.1.0
+
+# Data processing
+pandas==2.2.2
+pyarrow==16.1.0
+
+# Optional: Spark Structured Streaming
+# pyspark==3.5.1
+
+# Optional: ML model (future phase)
+# scikit-learn==1.5.0
+# tensorflow==2.16.1
+
+# Testing
+pytest==8.2.2
+pytest-mock==3.14.0
