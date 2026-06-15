@@ -22,9 +22,9 @@ You crack your car windows to ventilate on a hot summer day. A storm rolls in. Y
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    STREAMING INGESTION LAYER                        │
 │                                                                     │
-│  OpenWeatherMap API ──►  NiFi / Kafka Producer  ──► Kafka Topic    │
+│  OpenWeatherMap API ──►  NiFi / Kafka Producer  ──► Kafka Topic     │
 │  Tomorrow.io API    ──►  (weather.raw.stream)                       │
-│  MQTT Broker (IoT)  ──►  NiFi Flow / MQTT Bridge                   │
+│  MQTT Broker (IoT)  ──►  NiFi Flow / MQTT Bridge                    │
 │  NWS/NOAA WebSocket ──►  Direct Kafka Ingest                        │
 └─────────────────────────┬───────────────────────────────────────────┘
                           │
@@ -35,7 +35,7 @@ You crack your car windows to ventilate on a hot summer day. A storm rolls in. Y
 │  - Parse precipitation probability, intensity, type                 │
 │  - Geofence matching (car location vs. storm polygon)               │
 │  - Threshold evaluation (configurable per user/vehicle)             │
-│  - State machine: CLEAR → WATCH → WARN → ALERT → RESOLVED          │
+│  - State machine: CLEAR → WATCH → WARN → ALERT → RESOLVED           │
 └─────────────────────────┬───────────────────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────────────────┐
