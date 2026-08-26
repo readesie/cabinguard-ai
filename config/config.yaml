@@ -1,0 +1,208 @@
+# CabinGuard AI — Configuration Template
+# Copy this file to config.yaml and fill in your values.
+# All stream sources have an independent enabled flag —
+# toggle freely for experimentation without code changes.
+
+# ─────────────────────────────────────────────────────────────
+# LOCATIONS TO MONITOR
+# Add as many as you like — each gets its own Kafka partition.
+# ─────────────────────────────────────────────────────────────
+locations:
+  - id: home
+    label: "6969 meeker woods"
+    lat: 39.75895
+    lon: -84.19161
+  - id: work
+    label: "Sheryl's Office"
+    lat: 39.68669509887695
+    lon: -84.16822814941406
+  # Add more locations; pipeline will track all simultaneously.
+  # When vehicle GPS is integrated, location is set dynamically.
+
+# ─────────────────────────────────────────────────────────────
+# VEHICLES
+# ─────────────────────────────────────────────────────────────
+vehicles:
+  - id: 5YJ3E1EA3KF398329
+    name: "Pegasus"
+    api: tesla_fleet          # tesla_fleet | generic_webhook | simulated
+    track_gps: true           # if true, use vehicle GPS instead of fixed location above
+    actions:
+      on_rain_alert: close_windows      # close_windows | notify_only | none
+      on_heat_alert: vent_windows       # vent_windows | notify_only | none
+      on_aqi_alert: close_windows       # close_windows | notify_only | none
+      on_lightning_alert: close_windows
+
+# ─────────────────────────────────────────────────────────────
+# ALERT THRESHOLDS
+# Each threshold has a warning and a critical level.
+# ─────────────────────────────────────────────────────────────
+alert_thresholds:
+  precip_probability_pct:
+    warn: 30
+    critical: 50
+  precip_intensity_mm_hr:
+    warn: 0.2      # light drizzle
+    critical: 2.0  # moderate rain
+  cabin_temp_c:
+    warn: 35       # open windows to ventilate
+    critical: 45   # act immediately
+  lightning_distance_km:
+    warn: 50
+    critical: 20
+  wind_speed_ms:
+    warn: 10       # rain may drive in through open windows
+    critical: 15
+  air_quality_index:
+    warn: 100      # USG level
+    critical: 150  # Unhealthy
+
+# ─────────────────────────────────────────────────────────────
+# STREAMING SOURCES — TIER 1 (PRODUCTION)
+# ─────────────────────────────────────────────────────────────
+streams:
+  openweathermap:
+    enabled: true
+    experimental: false
+    api_key: "691c0e01a41a1b53fda6cdb00183ff52"
+    poll_interval_seconds: 60
+    kafka_topic: weather.owm.raw
+    variables:
+      - temp_c
+      - feels_like_c
+      - humidity_rh
+      - cloud_cover_pct
+      - wind_speed_ms
+      - wind_direction_deg
+      - pressure_hpa
+      - uv_index
+      - weather_description      
+      - rain_1h_mm
+      - snow_1h_mm
+
+  tomorrow_io:
+    enabled: true
+    experimental: false
+    api_key: YOUR_TOMORROW_IO_KEY_HERE
+    poll_interval_seconds: 300    # 5-min; respect free tier limits
+    kafka_topic: weather.tomorrow.raw
+    variables:
+      - precip_probability
+      - precip_intensity_mm_hr
+      - precip_type                # rain | snow | sleet | freezing_rain
+      - dew_point_c
+      - solar_irradiance_wm2
+      - storm_cell_distance_km
+
+# ─────────────────────────────────────────────────────────────
+# STREAMING SOURCES — TIER 2 (CONTEXTUAL / EXPERIMENTAL)
+# ─────────────────────────────────────────────────────────────
+  noaa_websocket:
+    enabled: false
+    experimental: true
+    endpoint: wss://api.weather.gov/streams/observations
+    kafka_topic: weather.noaa.raw
+    variables:
+      - pressure_tendency_3hr
+      - radar_reflectivity_dbz
+
+  blitzortung_lightning:
+    enabled: false
+    experimental: true
+    endpoint: wss://ws1.blitzortung.org/
+    kafka_topic: weather.lightning.raw
+    variables:
+      - lightning_strike_lat
+      - lightning_strike_lon
+      - lightning_strike_distance_km
+
+  mqtt_iot_cabin:
+    enabled: false
+    experimental: true
+    broker_host: localhost
+    broker_port: 1883
+    topic: cabinguard/cabin/+
+    kafka_topic: weather.iot.cabin
+    variables:
+      - cabin_temp_c
+      - cabin_humidity_rh
+
+  weather_underground_pws:
+    enabled: false
+    experimental: true
+    api_key: YOUR_WU_KEY_HERE
+    station_id: KOHDAY123       # nearest personal weather station
+    kafka_topic: weather.pws.raw
+    variables:
+      - precip_rate_in_hr
+      - precip_today_in
+
+  iowa_mesonet:
+    enabled: false
+    experimental: true
+    kafka_topic: weather.mesonet.raw
+    variables:
+      - precip_intensity_mm_hr
+      - pressure_hpa
+
+# ─────────────────────────────────────────────────────────────
+# KAFKA
+# ─────────────────────────────────────────────────────────────
+kafka:
+  bootstrap_servers: localhost:9092
+  consumer_group: cabinguard-processor
+  auto_offset_reset: latest
+  topics_output:
+    alerts: cabinguard.alerts
+    state: cabinguard.state
+
+# ─────────────────────────────────────────────────────────────
+# ALERTING CHANNELS
+# ─────────────────────────────────────────────────────────────
+alerting:
+  push_notification:
+    enabled: true
+    provider: fcm              # fcm | apns
+    server_key: YOUR_FCM_KEY
+
+  sms:
+    enabled: false
+    provider: twilio
+    account_sid: YOUR_TWILIO_SID
+    auth_token: YOUR_TWILIO_TOKEN
+    from_number: "+15551234567"
+    to_number: "+15559876543"
+
+  email:
+    enabled: false
+    provider: sendgrid
+    api_key: YOUR_SENDGRID_KEY
+    from: alerts@cabinguard-ai.local
+    to: you@example.com
+
+  webhook:
+    enabled: false
+    url: https://your-webhook-endpoint.example.com/cabinguard
+    secret: YOUR_WEBHOOK_SECRET
+
+# ─────────────────────────────────────────────────────────────
+# TESLA FLEET API
+# ─────────────────────────────────────────────────────────────
+tesla:
+  client_id: YOUR_TESLA_CLIENT_ID
+  client_secret: YOUR_TESLA_CLIENT_SECRET
+  token_url: https://auth.tesla.com/oauth2/v3/token
+  api_base_url: https://fleet-api.prd.na.vn.cloud.tesla.com
+  # Simulated mode: actions are logged but NOT sent to Tesla API
+  simulated: true
+
+# ─────────────────────────────────────────────────────────────
+# PROCESSING
+# ─────────────────────────────────────────────────────────────
+processing:
+  engine: python               # python | spark
+  # spark mode requires a running Spark cluster or local[*]
+  spark_master: local[2]
+  state_machine:
+    cooldown_minutes: 15       # minimum time between repeat alerts
+    alert_expiry_minutes: 60   # auto-resolve after this if no new data

@@ -42,10 +42,10 @@ You crack your car windows to ventilate on a hot summer day. A storm rolls in. Y
 │                    ALERTING & ACTION LAYER                          │
 │                                                                     │
 │  Flask-RESTful API ──► Push Notification (FCM/APNs)                 │
-│                   ──► Tesla Fleet API (vent/close windows)          │
-│                   ──► SMS/Email (Twilio/SendGrid)                   │
-│                   ──► Webhook (custom integrations)                 │
-│                   ──► MQTT publish (IoT device feedback)            │
+│                    ──► Tesla Fleet API (vent/close windows)         │
+│                    ──► SMS/Email (Twilio/SendGrid)                  │
+│                    ──► Webhook (custom integrations)                │
+│                    ──► MQTT publish (IoT device feedback)           │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
