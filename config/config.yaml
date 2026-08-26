@@ -1,6 +1,6 @@
 # CabinGuard AI — Configuration Template
 # Copy this file to config.yaml and fill in your values.
-# All stream sources have an independent enabled flag —
+# All stream sources have an independent enabled flag — 
 # toggle freely for experimentation without code changes.
 
 # ─────────────────────────────────────────────────────────────
