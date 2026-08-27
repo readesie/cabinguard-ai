@@ -8,8 +8,9 @@ Getting your Model 3 connected is a one-time setup. Here's exactly what you need
 
 1. Go to [developer.tesla.com](https://developer.tesla.com) and sign in with your Tesla account.
 2. Create a new application. Name it anything (e.g. "CabinGuard AI").
-3. Set the redirect URI to `https://auth.tesla.com/void/callback` for local/CLI testing.
-4. Request these OAuth scopes:
+3. Set the origin uri to `http://localhost:8000`.
+4. Set the redirect and returned uris to `https://auth.tesla.com/void/callback` for local/CLI testing.
+5. Request these OAuth scopes:
    - `vehicle_cmds` — required for window vent/close commands
    - `vehicle_device_data` — required to read vehicle state and temperatures
 
@@ -20,13 +21,22 @@ Tesla manually reviews Fleet API applications. Approval typically takes 1–3 bu
 ## Step 2 — Set Environment Variables
 
 ```bash
-export TESLA_CLIENT_ID=your_application_client_id
-export TESLA_CLIENT_SECRET=your_application_client_secret
-export TESLA_MODEL3_VIN=5YJ3E1EAXNF......   # found in the Tesla app → Settings → About
+#if linux/unix export TESLA_CLIENT_ID=your_application_client_id # e.g. found in Credentials & APIs tab of created app on developer.tesla.com
+#if linux/unix export TESLA_CLIENT_SECRET=your_application_client_secret # e.g. found in Credentials & APIs tab of created app on developer.tesla.com (likely gibberish like a password)
+#if linux/unix export TESLA_MODEL3_VIN=5YJ3E1EAXNF......   # e.g. found in the Tesla app → Settings → About
 ```
 
 Add these to your `~/.bashrc` or `~/.zshrc` so they persist across sessions.
 
+```windows
+Press Win + R → type sysdm.cpl
+Advanced tab → Environment Variables
+Under User variables, click New for each
+TESLA_CLIENT_ID = your client id
+TESLA_CLIENT_SECRET = your client secret
+TESLA_MODEL3_VIN = your VIN
+Restart terminal
+```
 ---
 
 ## Step 3 — Update config.yaml
