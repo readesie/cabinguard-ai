@@ -24,18 +24,18 @@ Tesla manually reviews Fleet API applications. Approval typically takes 1–3 bu
 #if linux/unix export TESLA_CLIENT_ID=your_application_client_id # e.g. found in Credentials & APIs tab of created app on developer.tesla.com
 #if linux/unix export TESLA_CLIENT_SECRET=your_application_client_secret # e.g. found in Credentials & APIs tab of created app on developer.tesla.com (likely gibberish like a password)
 #if linux/unix export TESLA_MODEL3_VIN=5YJ3E1EAXNF......   # e.g. found in the Tesla app → Settings → About
+
+#if linux/unix Add these to your `~/.bashrc` or `~/.zshrc` so they persist across sessions.
 ```
 
-Add these to your `~/.bashrc` or `~/.zshrc` so they persist across sessions.
-
 ```windows
-Press Win + R → type sysdm.cpl
-Advanced tab → Environment Variables
-Under User variables, click New for each
-TESLA_CLIENT_ID = your client id
-TESLA_CLIENT_SECRET = your client secret
-TESLA_MODEL3_VIN = your VIN
-Restart terminal
+#if windows Press Win + R → type sysdm.cpl
+#if windows Advanced tab → Environment Variables
+#if windows Under User variables, click New for each
+#if windows TESLA_CLIENT_ID = your client id
+#if windows TESLA_CLIENT_SECRET = your client secret
+#if windows TESLA_MODEL3_VIN = your VIN
+#if windows Restart terminal
 ```
 ---
 
