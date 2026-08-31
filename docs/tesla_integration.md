@@ -42,10 +42,19 @@ Tesla manually reviews Fleet API applications. Approval typically takes 1–3 bu
 ## Step 3 — Update config.yaml
 
 ```yaml
+If hardcoded...
 tesla:
-  client_id: YOUR_CLIENT_ID      # or leave blank and use env vars
+  client_id: YOUR_CLIENT_ID      
   client_secret: YOUR_SECRET
   simulated: false               # switch from true to false to go live
+
+If using windows env vars...
+tesla:
+  client_id: ${TESLA_CLIENT_ID}
+  client_secret: ${TESLA_CLIENT_SECRET}
+  simulated: false               # switch from true to false to go live
+
+
 ```
 
 ---
