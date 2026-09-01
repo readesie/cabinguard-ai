@@ -23,8 +23,8 @@ locations:
 # VEHICLES
 # ─────────────────────────────────────────────────────────────
 vehicles:
-  - id: YOUR_VIN_HERE
-    name: "My Tesla"
+  - id: "1492931483925432"    # Pegasus — Tesla numeric vehicle ID (not VIN)
+    name: "Pegasus"           # Model 3, VIN 5YJ3E1EA3KF398329
     api: tesla_fleet          # tesla_fleet | generic_webhook | simulated
     track_gps: true           # if true, use vehicle GPS instead of fixed location above
     actions:

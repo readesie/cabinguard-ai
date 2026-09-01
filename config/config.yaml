@@ -23,8 +23,8 @@ locations:
 # VEHICLES
 # ─────────────────────────────────────────────────────────────
 vehicles:
-  - id: 5YJ3E1EA3KF398329
-    name: "Pegasus"
+  - id: "1492931483925432"    # Pegasus — Tesla numeric vehicle ID (not VIN)
+    name: "Pegasus"           # Model 3, VIN 5YJ3E1EA3KF398329
     api: tesla_fleet          # tesla_fleet | generic_webhook | simulated
     track_gps: true           # if true, use vehicle GPS instead of fixed location above
     actions:
@@ -68,6 +68,9 @@ streams:
     poll_interval_seconds: 60
     kafka_topic: weather.owm.raw
     variables:
+      - precip_probability
+      - precip_intensity_mm_hr
+      - precip_accumulation_1hr
       - temp_c
       - feels_like_c
       - humidity_rh
