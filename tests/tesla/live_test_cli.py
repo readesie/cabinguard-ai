@@ -36,7 +36,8 @@ from src.alerting.tesla_client import TeslaClient
 
 CLIENT_ID = os.environ.get("TESLA_CLIENT_ID", "")
 CLIENT_SECRET = os.environ.get("TESLA_CLIENT_SECRET", "")
-VIN = os.environ.get("TESLA_MODEL3_VIN", "")
+VIN = os.environ.get("TESLA_MODEL3_VIN", "")           # display only
+VEHICLE_ID = os.environ.get("TESLA_VEHICLE_ID", "1492931483925432")  # Pegasus numeric ID
 SIMULATE = os.environ.get("SIMULATE", "0") == "1"
 
 MENU = """
@@ -64,11 +65,12 @@ def banner():
     print("  CabinGuard AI — Model 3 Live Test")
     print(f"  Mode: {mode}")
     print(f"  VIN:  {vin_display}")
+    print(f"  Vehicle ID: {VEHICLE_ID}")
     print("="*52 + "\n")
 
 
 def make_client() -> TeslaClient:
-    if not SIMULATE and (not CLIENT_ID or not CLIENT_SECRET or not VIN):
+    if not SIMULATE and (not CLIENT_ID or not CLIENT_SECRET or not VEHICLE_ID):
         print("❌  Missing credentials. Set env vars:")
         print("    export TESLA_CLIENT_ID=...")
         print("    export TESLA_CLIENT_SECRET=...")
@@ -83,7 +85,7 @@ def make_client() -> TeslaClient:
     }
     vehicles = [
         {
-            "id": VIN or "SIM-VIN-MODEL3",
+            "id": VEHICLE_ID or "SIM-VIN-MODEL3",
             "name": "Model 3 (CabinGuard Test)",
             "api": "tesla_fleet",
             "actions": {
@@ -96,9 +98,9 @@ def make_client() -> TeslaClient:
 
 
 def print_vehicle_state(client: TeslaClient):
-    vin = VIN or "SIM-VIN-MODEL3"
-    print(f"\n⏳ Fetching vehicle state for {vin}...")
-    state = client.get_vehicle_state(vin)
+    vehicle_id = VEHICLE_ID or "SIM-VIN-MODEL3"
+    print(f"\n⏳ Fetching vehicle state for Pegasus ({vehicle_id})...")
+    state = client.get_vehicle_state(vehicle_id)
     if state is None:
         print("❌  Could not retrieve vehicle state.")
         return
@@ -135,13 +137,13 @@ def to_f(c) -> str:
 
 
 def do_vent(client: TeslaClient):
-    vin = VIN or "SIM-VIN-MODEL3"
+    vehicle_id = VEHICLE_ID or "SIM-VIN-MODEL3"
     confirm = input("\n  🪟 Vent windows on your Model 3? [y/N] ").strip().lower()
     if confirm != "y":
         print("  Aborted.")
         return
     print("  📤 Sending VENT command...")
-    client.vent_windows(vin)
+    client.vent_windows(vehicle_id)
     if not SIMULATE:
         print("  ⏳ Waiting 6s for windows to move...")
         time.sleep(6)
@@ -150,13 +152,13 @@ def do_vent(client: TeslaClient):
 
 
 def do_close(client: TeslaClient):
-    vin = VIN or "SIM-VIN-MODEL3"
+    vehicle_id = VEHICLE_ID or "SIM-VIN-MODEL3"
     confirm = input("\n  🪟 Close windows on your Model 3? [y/N] ").strip().lower()
     if confirm != "y":
         print("  Aborted.")
         return
     print("  📤 Sending CLOSE command...")
-    client.close_windows(vin)
+    client.close_windows(vehicle_id)
     if not SIMULATE:
         print("  ⏳ Waiting 8s for windows to close...")
         time.sleep(8)
@@ -165,17 +167,17 @@ def do_close(client: TeslaClient):
 
 
 def do_honk(client: TeslaClient):
-    vin = VIN or "SIM-VIN-MODEL3"
+    vehicle_id = VEHICLE_ID or "SIM-VIN-MODEL3"
     confirm = input("\n  📣 Honk horn on your Model 3? [y/N] ").strip().lower()
     if confirm != "y":
         print("  Aborted.")
         return
-    client.honk_horn(vin)
+    client.honk_horn(vehicle_id)
     print("  ✅ Honk command dispatched.")
 
 
 def do_full_cycle(client: TeslaClient):
-    vin = VIN or "SIM-VIN-MODEL3"
+    vehicle_id = VEHICLE_ID or "SIM-VIN-MODEL3"
     print("\n  🔄 Full CabinGuard AI Cycle:")
     print("     Simulates: hot day → windows vented → rain alert → windows closed")
     confirm = input("  Proceed? [y/N] ").strip().lower()
@@ -184,7 +186,7 @@ def do_full_cycle(client: TeslaClient):
         return
 
     print("\n  Step 1/3: Venting windows (simulating hot-day scenario)...")
-    client.vent_windows(vin)
+    client.vent_windows(vehicle_id)
     if not SIMULATE:
         time.sleep(6)
     print("  → Windows vented.")
@@ -194,7 +196,7 @@ def do_full_cycle(client: TeslaClient):
         time.sleep(5)
 
     print("\n  Step 3/3: 🌧️ Rain alert triggered — closing windows!")
-    client.close_windows(vin)
+    client.close_windows(vehicle_id)
     if not SIMULATE:
         time.sleep(8)
         print_vehicle_state(client)
@@ -227,12 +229,12 @@ def main():
         if choice == "1":
             print_vehicle_state(client)
         elif choice == "2":
-            vin = VIN or "SIM-VIN-MODEL3"
-            print(f"\n  ⏳ Waking vehicle {vin}...")
+            vehicle_id = VEHICLE_ID or "SIM-VIN-MODEL3"
+            print(f"\n  ⏳ Waking Pegasus ({vehicle_id})...")
             if SIMULATE:
                 print("  [Simulated wake — vehicle is online]")
             else:
-                client._wake_vehicle(vin, max_attempts=6, sleep_sec=5)
+                client._wake_vehicle(vehicle_id, max_attempts=6, sleep_sec=5)
                 print("  ✅ Wake sequence complete.")
         elif choice == "3":
             do_vent(client)
